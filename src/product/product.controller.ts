@@ -1,15 +1,18 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { Product, products } from 'src/core';
+import { Product } from 'src/core';
+import { ProductPrisma } from './product.prisma';
 
 @Controller('products')
 export class ProductController {
+  constructor(readonly repo: ProductPrisma) {}
+
   @Get()
-  getAll(): Product[] {
-    return products;
+  async findAll(): Promise<Product[]> {
+    return this.repo.findAll();
   }
 
   @Get(':id')
   async findById(@Param('id') id: string): Promise<Product> {
-    return products.find((p) => p.id === +id) ?? null;
+    return this.repo.findById(+id);
   }
 }
